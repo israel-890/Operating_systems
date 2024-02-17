@@ -1,3 +1,5 @@
+
+
 class Customer:
     def __init__(self, first, last, id, phone, debt, date):
         self._first = first
@@ -10,18 +12,10 @@ class Customer:
     @property
     def id(self):
         return self._id
-       
-    @property
-    def detb(self):
-        return self._debt
-
-    def debt(self, debt):
-        if type(debt) is not int:
-            print("Error: debt is not on int")
-            return
-        self._debt = debt
     
     def __str__(self):
-        return f"name: {self._first}{self._last} ID:{self._id}"
-    
+        return f"name: {self._first}{self._last} ID:{self._id} phone:{self._phone}"
 
+    
+    
+    
