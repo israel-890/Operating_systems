@@ -1,12 +1,12 @@
 import os
 import sys
 from customer import Customer
-from dateutil.parser import parse
+from datetime import datetime, date, strftime
 import re
 
 class Validation():
 
-    def is_valid_id(id_number):
+    def valid_id(id_number):
         if len(id_number) > 9:
             return False
         try:
@@ -22,7 +22,7 @@ class Validation():
             return False
         return True
      
-    def is_valid_phone(phone_num):
+    def valid_phone(phone_num):
         if phone_num[0] != "0":
             return False
         if len(phone_num) > 10 or len(phone_num) < 9:
@@ -34,14 +34,15 @@ class Validation():
         else:
             return True
     
-    def is_valid_date(date):
+    def valid_date(date):
         try:
-            parse(date)
+            datetime.strptime(date, "%d.%m.%y")
+            datetime.strptime(date, "%d/%m/%y")
             return True
         except ValueError:
             return False
        
-    def is_money_amount(sum):
+    def money_amount(sum):
         money_pattern = re.compile(r'^\d+(\.\d{1,2})?$')
         if money_pattern.match(sum):
             return True
@@ -62,10 +63,16 @@ class Customer:
         return self._id
     
     def __str__(self):
-        return f"name: {self._first}{self._last} ID:{self._id} phone:{self._phone}"
+        return f"name: {self._first}{self._last} ID:{self._id} phone:{self._phone} debt:{self._debt} date:{self._date}"
     
     def add_debt(self, new_debt):
         self._debt += new_debt
+
+    def update_date(self, date1, date2):
+        if date1 > date2:
+            return date1
+        else:
+            return date2    
 
 class Customers_list():
     def __init__(self):
@@ -76,6 +83,7 @@ class Customers_list():
         for customer in self.customers:
             if customer.id == id:
                 customer.add_debt(float(new_custemer[4]))
+                customer._date = customer.update_date(new_custemer[5], customer._date)
                 break
         else:
             customer = Customer(*new_custemer)
