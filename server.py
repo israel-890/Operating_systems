@@ -1,10 +1,8 @@
 import os
 import sys
-# from customer import Customer
 from validation import Validation
 from datetime import datetime, date
 import socket
-import time
 from threading import Thread
 
 
@@ -87,13 +85,13 @@ class Customers_list():
                         print("Error: the date didn't put or not correct!")
                 elif len(file_line_dtb) < 6:
                     print(f"Line {line_number} is missing data!")
-                customers_list.add_customer(file_line_dtb)
+                self.add_customer(file_line_dtb)
 
     def add_customer(self, new_customer:list[str]):
         id = new_customer[2]
         for customer in self.customers:
             if customer.id == id:
-                Validation.check_name(new_customer[0], new_customer[1], customer.first, customer.last)
+                validation.check_name(new_customer[0], new_customer[1], customer.first, customer.last)
                 customer.add_debt(float(new_customer[4]))
                 customer.date = customer.update_date(new_customer[5], customer.date)
                 break
@@ -102,16 +100,10 @@ class Customers_list():
             self.customers.append(customer)
     
     def delete_customer(self, id):
-        customer = customers_list.
-        
-        find(lambda c: c.id == id)
-
-
-        if customer:
-            customers_list.remove(customer)
-            return f"Customer with ID {id} deleted successfully!"
-
-        # אם הלקוח לא נמצא
+        for i in self.customers:
+            if i.id == str(id):
+                self.customers.remove(i)  
+                return f"Customer with ID {id} deleted successfully!"
         return f"Customer with ID {id} not found!"
 
     
@@ -122,82 +114,83 @@ class Customers_list():
     def sort_by_debt(self):
         print("sorting...")
         self.customers.sort(key=lambda x: x._debt)
-        print(customers_list)
+        print(self.__str__())
 
     def sort_and_print(self):
         self.customers.sort(key=lambda x: x.debt, reverse=True)
-        print(customers_list)
+        print(self.__str__())
 
 
 def handle_connection(client_socket, server_socket):
+
     data = client_socket.recv(1024)
     
     print(f"Received data: {data.decode('utf-8')}")
     query = data.decode('utf-8')
-
-    t = Thread(target=_handle_request, args=(query, client_socket))
-    t.start()
-    if query == "bay" or query == "quit":
+    if query == "bye" or query == "quit":
+        global exit
         exit = True
         return exit
-    return query
+    handle_request(query, customers_list, validation)
 
 
-def _handle_request(query, client_socket):
+def handle_request(query, customers_instance, valid_instance):
     if query == "print":
-        customers_list.sort_and_print()
+        customers_instance.sort_and_print()
     elif query == "sort":
-        customers_list.sort_by_debt()
-    elif query == "add_client":
+        customers_instance.sort_by_debt()
+    elif query == "remove client":
+        remove = input("How to remove? enter ID: ")
+        customers_instance.delete_customer(remove)
+    elif query == "add client":
         names = ["first_name", "last_name", "id", "phone_number", "debt", "date"]
         values = [input(f"Enter a {name}: ") or 'Empty No input entered!' for name in names]
-        if not validation.valid_id(values[2]):
+        if not valid_instance.valid_id(values[2]):
             print("Error: the id didn't put or not correct!")
             return None
-        if not validation.valid_phone(values[3]):
+        if not valid_instance.valid_phone(values[3]):
             print("Error: the phone didn't put or not correct!")
             return None
-        if not validation.money_amount(values[4]):
+        if not valid_instance.money_amount(values[4]):
             print("Error: the debt didn't put or not correct!")
             return None
-        if not validation.valid_date(values[5]):
+        if not valid_instance.valid_date(values[5]):
             print("Error: the date didn't put or not correct!")
             return None
         print(f"thees is the added {values}")
-        customers_list.add_customer(values)
+        customers_instance.add_customer(values)
     else:
         print(f"Unknown request: {query}")
         return None
-    
-exit = False
+
 customers_list = Customers_list()
-customers_list.create_customers_list()
 validation = Validation()
+customers_list.create_customers_list()
 
-host = '127.0.0.1'
-port = 12345
-
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind((host, port))
-server_socket.listen(5)
-
-print(f"Server listening on {host}:{port}")
 
 def main():
+    exit = False
+    host = '127.0.0.1'
+    port = 12345
+
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((host, port))
+    server_socket.listen(5)
+
+    print(f"Server listening on {host}:{port}")
+
     if len(sys.argv) < 2:
         print("Error: missing csv file name!")
         quit()
-
     while not exit:
         try:
             client_socket, client_address = server_socket.accept()
         except OSError:
             break
         print(f"Accepted connection from {client_address}")
-        t = Thread(target=handle_connection, args=(client_socket, server_socket))
+        t = Thread(target=handle_connection, args=(client_socket, server_socket, customers_list, validation))
         t.start()
         
-
 if __name__ == '__main__':
     main()
                

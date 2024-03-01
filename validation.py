@@ -1,22 +1,25 @@
-from datetime import datetime, date
+from datetime import datetime
 
 
 class Validation():
 
     @staticmethod
     def valid_id(id_number):
-        if len(id_number) > 9:
+        if len(str(id_number)) > 9:
             return False
         try:
             id_number = int(id_number)
         except ValueError:
             return False
         sum_digits = 0
-        for i, digit in enumerate(str(id_number)[:-1]):
-            multiplier = 1 if i % 2 == 0 else 2
-            sum_digits += multiplier * int(digit)
-        check_digit = 10 - (sum_digits % 10)
-        if check_digit != int(str(id_number)[-1]):
+        for digit in str(id_number)[1::2]:
+            multiplier = int(digit) * 2
+            if multiplier > 9:
+                multiplier = int(str(multiplier)[0]) + int(str(multiplier)[1])
+            sum_digits += multiplier 
+        for digit in str(id_number)[0::2]:
+            sum_digits += int(digit)
+        if sum_digits % 10 != 0:
             return False
         return True
 
@@ -71,3 +74,4 @@ class Validation():
             return True
         except:
             print("Error: the debt is not correct!")
+            
