@@ -100,7 +100,7 @@ class CustomersList():
                 self.customers.remove(i)  
                 print( f"Customer with ID {id} deleted successfully!")
                 return
-        print (f"Customer with ID {id} not found!")
+        print(f"Customer with ID {id} not found!")
 
     def __str__(self):
         customer_info = [str(customer) for customer in self.customers]
@@ -152,6 +152,7 @@ def handle_request(query, customers_instance, valid_instance):
     else:
         print(f"Unknown request: {query}")
         return None
+
 
 
 customers_list = CustomersList()
