@@ -39,7 +39,7 @@ class Customer:
         self._date = new_date
     
     def __str__(self):
-        return f"name: {self.first}{self.last} ID:{self.id} phone:{self.phone} debt:{self.debt} date:{self.date}"
+        return f"name: {self.first} {self.last} ID:{self.id} phone:{self.phone} debt:{self.debt} date:{self.date}"
     
     def add_debt(self, new_debt):
         current_debt = float(self.debt)
@@ -86,7 +86,7 @@ class CustomersList():
         id = new_customer[2]
         for customer in self.customers:
             if customer.id == id:
-                validation.check_name(new_customer[0], new_customer[1], customer.first, customer.last)
+                validation.check_name(new_customer[0].lower(), new_customer[1].lower(), customer.first, customer.last)
                 customer.add_debt(float(new_customer[4]))
                 customer.date = customer.update_date(new_customer[5], customer.date)
                 break
@@ -147,7 +147,7 @@ def handle_request(query, customers_instance, valid_instance):
         if not valid_instance.valid_date(values[5]):
             print("Error: the date does not exist or not correct or year without 4 digits!")
             return None
-        print(f"thees is the added {values}")
+        print(f"Added {values} successfully added!!")
         customers_instance.add_customer(values)
     else:
         print(f"Unknown request: {query}")
