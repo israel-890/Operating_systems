@@ -53,22 +53,12 @@ class Validation():
             return False
 
     @staticmethod
-    def valid_date(date_str):
+    def valid_date(my_date):
         try:
-            date_obj = datetime.strptime(date_str, "%d-%m-%y").date()
+            return datetime.strptime(my_date, "%d/%m/%Y").date()
         except ValueError:
+            print("Invalid input of date format.")
             return False
-        if date_obj < date.min or date_obj > date.max:
-            return False
-        month = date_obj.month
-        if month < 1 or month > 12:
-            return False
-        day = date_obj.day
-        if day < 1 or day > 31:
-            return False
-        if month == 2 and day > 29:
-            return False
-        return True
         
     @staticmethod
     def money_amount(sum):

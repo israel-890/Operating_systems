@@ -1,7 +1,7 @@
 import os
 import sys
 from validation import Validation
-#import socket
+# import socket
 # from threading import Thread
 
 
@@ -55,7 +55,8 @@ class Customer:
         else:
             return date2    
 
-class Customers_list():
+
+class CustomersList():
     def __init__(self):
         self.customers:list[Customer] = []
     
@@ -67,19 +68,19 @@ class Customers_list():
         with open(file_name, "r") as fd:
             for line in fd.readlines():
                 line_number += 1
-                file_line_dtb = line.split(",")
-                if len(file_line_dtb) == 6:
+                if len(line.split(",")) != 6:
+                    print(f"line error: {line_number} Incorrect number of entries")
+                else:
+                    file_line_dtb = line.lower().strip().split(",")
                     if not validation.valid_id(file_line_dtb[2]): 
                         print("Error: ID does not exist or not correct!")
                     if not validation.valid_phone(file_line_dtb[3]):
                         print("Error: Phone number does not exist or not correct!")
                     if not validation.money_amount(file_line_dtb[4]):
                         print("Error: the debt does not exist or not correct!")
-                    # if not validation.valid_date(file_line_dtb[5]):
-                    #    print("Error: the date does not exist or not correct!")
-                elif len(file_line_dtb) < 6:
-                    print(f"Line {line_number} is missing data!")
-                self.add_customer(file_line_dtb)
+                    if not validation.valid_date(file_line_dtb[5]):
+                        print("Error: the date does not exist or not correct or year without 4 digits !")
+                    self.add_customer(file_line_dtb)
 
     def add_customer(self, new_customer:list[str]):
         id = new_customer[2]
@@ -143,15 +144,17 @@ def handle_request(query, customers_instance, valid_instance):
         if not valid_instance.money_amount(values[4]):
             print("Error: the debt does not exist or not correct!")
             return None
-        # if not valid_instance.valid_date(values[5]):
-        #     print("Error: the date does not exist or not correct!")
-        #     return None
+        if not valid_instance.valid_date(values[5]):
+            print("Error: the date does not exist or not correct or year without 4 digits!")
+            return None
         print(f"thees is the added {values}")
         customers_instance.add_customer(values)
     else:
         print(f"Unknown request: {query}")
         return None
-customers_list = Customers_list()
+
+
+customers_list = CustomersList()
 validation = Validation()
 def main():
     if len(sys.argv) < 2:
