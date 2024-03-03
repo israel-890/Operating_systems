@@ -97,8 +97,9 @@ class Customers_list():
         for i in self.customers:
             if i.id == str(id):
                 self.customers.remove(i)  
-                return f"Customer with ID {id} deleted successfully!"
-        return f"Customer with ID {id} not found!"
+                print( f"Customer with ID {id} deleted successfully!")
+                return
+        print (f"Customer with ID {id} not found!")
 
     def __str__(self):
         customer_info = [str(customer) for customer in self.customers]
@@ -116,8 +117,7 @@ class Customers_list():
 
 def handle_request(query, customers_instance, valid_instance):
     if query == "quit":
-        exit = True
-        return exit
+        quit()
     elif query == "print":
         customers_instance.sort_and_print()
     elif query == "sort":

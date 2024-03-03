@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 
 
 class Validation():
@@ -47,25 +47,28 @@ class Validation():
      
     @staticmethod
     def valid_phone(phone_num):
-        if phone_num[0] != "0":
-            return False
-        if len(phone_num) > 10 or len(phone_num) < 9:
-            return False
-        try:
-            int(phone_num)
-        except ValueError:
-            return False
+        if phone_num[0] == ('0'):
+            return phone_num[1:].isdigit() and len(phone_num) == 10
         else:
-            return True
-    
+            return False
+
     @staticmethod
-    def valid_date(date):
+    def valid_date(date_str):
         try:
-            datetime.strptime(date, "%d.%m.%y")
-            datetime.strptime(date, "%d/%m/%y")
-            return True
+            date_obj = datetime.strptime(date_str, "%d-%m-%y").date()
         except ValueError:
             return False
+        if date_obj < date.min or date_obj > date.max:
+            return False
+        month = date_obj.month
+        if month < 1 or month > 12:
+            return False
+        day = date_obj.day
+        if day < 1 or day > 31:
+            return False
+        if month == 2 and day > 29:
+            return False
+        return True
         
     @staticmethod
     def money_amount(sum):
