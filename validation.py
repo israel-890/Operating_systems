@@ -1,5 +1,6 @@
-from datetime import date, datetime
-
+from datetime import datetime
+from socket import socket
+from server import receive_request, send_response 
 
 class Validation():
 
@@ -28,8 +29,9 @@ class Validation():
         if name1 == first or name1 == None:
             name1 = first
         else:
-            print(f"The name {first} does not match the name on this ID!")
-            chose = input(f"Do you to switch the name {first} to {name1}? y/n")
+            send_response(socket, f"The name '{first}' does not match the name on this ID!")
+            send_response(socket, f"Do you to switch the name '{first}' with '{name1}'? y/n")
+            chose = receive_request(socket)
             if chose == "y":
                 first = name1
             else:
@@ -37,13 +39,14 @@ class Validation():
         if last1 == last or last1 == None:
             last1 = last
         else:
-            print(f"The name {last} does not match the name on this ID!")
-            chose = input(f"Do you to switch the name {last} to {last1}? y/n")
+            send_response(socket, f"The name '{last}' do not match the name on this ID!"
+            "Do you to switch the name '{last}' with '{last1}'? y/n")
+            chose = receive_request(socket)
             if chose == "y":
                 last = last1
             else:
                 return
-        print("the names is correct!")
+        send_response(socket, "the names is correct!")
      
     @staticmethod
     def valid_phone(phone_num):
@@ -57,7 +60,7 @@ class Validation():
         try:
             return datetime.strptime(my_date, "%d/%m/%Y").date()
         except ValueError:
-            print("Invalid input of date format.")
+            send_response(socket, "Invalid input of date format.")
             return False
         
     @staticmethod
@@ -66,5 +69,5 @@ class Validation():
             float(sum)
             return True
         except:
-            print("Error: the debt is not correct!")
+            send_response(socket,"Error: the debt is not correct!")
             
